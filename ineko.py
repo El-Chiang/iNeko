@@ -1,6 +1,7 @@
 # coding=utf-8
 import requests
 import json
+import os
 import cv2
 
 
@@ -11,14 +12,20 @@ face_cascade = cv2.CascadeClassifier(cat_path)
 
 def recogn_face(img_url):
     img = requests.get(img_url)
+    fname = 'temp.jpg'
+    f = open(fname, 'wb')
+    f.write(img.content)
+    f.close()
+    img = cv2.imread(fname)
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    faces = face_cascade.delectMultiScale(
+    faces = face_cascade.detectMultiScale(
         gray,
         scaleFactor=1.02,
         minNeighbors=3,
         minSize=(150, 150),
         flags=cv2.CASCADE_SCALE_IMAGE
     )
+    os.remove(fname)
     if faces == ():
         return "NULL"
     for (x, y, w, h) in faces:
@@ -31,5 +38,8 @@ def recogn_face(img_url):
         'h': h
     }
     response = json.dumps(response)
+    
     return response
     
+
+recogn_face('https://github.com/El-Chiang/iNeko/blob/master/images/huangmaori/101.jpg?raw=true')
