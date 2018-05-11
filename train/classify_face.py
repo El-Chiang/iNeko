@@ -151,6 +151,7 @@ class ClassificationModel:
         # round predictions
         rounded = [np.around(x) for x in predictions]
         print(rounded)
+        print(predictions)
 
 
 def split_data(fname):
