@@ -4,13 +4,12 @@ import json
 import os
 import cv2
 
-
-# Loading cat-face detector
-cat_path = 'haarcascade_frontalcatface.xml'
-face_cascade = cv2.CascadeClassifier(cat_path)
-
-
 def recogn_face(img_url):
+
+    # Loading cat-face detector
+    cat_path = 'C:\\Users\\zbzha\\Documents\\iNeko\\haarcascade_frontalcatface.xml'
+    face_cascade = cv2.CascadeClassifier(cat_path)
+
     img = requests.get(img_url)
     fname = 'temp.jpg'
     f = open(fname, 'wb')
@@ -40,6 +39,4 @@ def recogn_face(img_url):
     response = json.dumps(response)
     
     return response
-    
 
-recogn_face('https://github.com/El-Chiang/iNeko/blob/master/images/huangmaori/101.jpg?raw=true')
