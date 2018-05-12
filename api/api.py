@@ -1,45 +1,37 @@
-from apistar import App, Route
-from apistar import http
+from flask import Flask,jsonify,request,Response,Request
+from flask_restful import Resource, Api,reqparse
+
 import sys
-import os
-import time
 sys.path.append('../')
 
 import ineko
 
-def getFace(query_params: http.QueryParams) -> dict:
-    url = query_params['url']
-    re = ineko.recogn_face(url)
-    return {
-        'response':re
-    }
+app = Flask(__name__)
+api = Api(app)
 
-def upload_img(request: http.Request) -> dict:
-    file_content = bytes(request.body)
-    fname = str(time.time())+'.jpg'
-    f = open('../uploads/'+fname,'wb')
-    f.write(file_content)
-    f.close
-    if(os.path.exists('../uploads/'+fname)):
-        return{
-            'response':{
-                'url': '../uploads/'+fname
-            }
-        }
-    else:
-        return{
-            'response':{
-                'error': 'upload failed'
-            }
+parser = reqparse.RequestParser()
+parser.add_argument('url')
+parser.add_argument('content')
+
+class Face(Resource):
+    def get(self):
+        
+        args = parser.parse_args()
+        url = args['url']
+        re = ineko.recogn_face(url)
+        return {
+            'response':re
         }
 
-routes = [
-    Route('/face', method='GET', handler=getFace),
-    Route('/images',method='POST',handler=upload_img)
-]
+class image(Resource):
+    def post(self):
+        return {
+            "1":request.values
+        }
 
-app = App(routes=routes)
-
+api.add_resource(Face, '/face')
+api.add_resource(image, '/images')
 
 if __name__ == '__main__':
-    app.serve('127.0.0.1', 5000, debug=True)
+    app.run(debug=True)
+    
