@@ -52,11 +52,24 @@ class cats(Resource):
         return{
             'data':data
         }
+    
+class cat(Resource):
+    def get(self,cat_id):
+        db = pymysql.connect("139.198.4.68","root","iNeko2018","ineko" )
+        cursor = db.cursor()
+        sql = 'select * from cats where id = ' + cat_id
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        db.close()
+        return{
+            'data':data
+        }
 
 
 api.add_resource(Face, '/face')
 api.add_resource(image, '/images')
 api.add_resource(cats,'/cats')
+api.add_resource(cat,'/cats/<cat_id>')
 
 if __name__ == '__main__':
     app.run(debug=True)
