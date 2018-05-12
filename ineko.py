@@ -3,11 +3,12 @@ import requests
 import json
 import os
 import cv2
+import time
 
 def recogn_face(img_url):
 
     # Loading cat-face detector
-    cat_path = 'C:\\Users\\zbzha\\Documents\\iNeko\\haarcascade_frontalcatface.xml'
+    cat_path = 'haarcascade_frontalcatface.xml'
     face_cascade = cv2.CascadeClassifier(cat_path)
 
     img = requests.get(img_url)
@@ -29,14 +30,18 @@ def recogn_face(img_url):
         return "NULL"
     for (x, y, w, h) in faces:
         cut_img = img[y: y + h, x: x + w]
+    path = '/' + str(time.time()) + '.jpg'
+    cv2.imwrite(path, cut_img)
     response = {
-        'cut_img': cut_img,
-        'x': x,
-        'y': y,
-        'w': w,
-        'h': h
+        'cut_img': '/' + path,
+        'x': str(x),
+        'y': str(y),
+        'w': str(w),
+        'h': str(h)
     }
     response = json.dumps(response)
-    
+    print(response)
     return response
 
+
+recogn_face('https://raw.githubusercontent.com/El-Chiang/iNeko/master/images/pipi/63.jpg')
