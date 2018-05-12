@@ -1,10 +1,13 @@
 from flask import Flask
 from flask_restful import Resource, Api,reqparse
+import time
 
 import sys
 sys.path.append('../')
 
 import ineko
+
+site_url = '127.0.0.1'
 
 app = Flask(__name__)
 api = Api(app)
@@ -26,9 +29,15 @@ class image(Resource):
     def post(self):
         args = parser.parse_args()
         parser.add_argument('content')
-        content = args['content']
+        content = bytes(args['content'],'utf-8')
+        fname = str(time.time())+'.jpg'
+        f = open('../uploads/'+fname,'wb')
+        f.write(content)
+        f.close
         return {
-            "content":content
+            'response':{
+                'url':site_url+'/uploads/'+fname
+            }
         }
 
 api.add_resource(Face, '/face')
