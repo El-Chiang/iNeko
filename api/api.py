@@ -1,4 +1,4 @@
-from flask import Flask,jsonify,request,Response,Request
+from flask import Flask
 from flask_restful import Resource, Api,reqparse
 
 import sys
@@ -10,13 +10,11 @@ app = Flask(__name__)
 api = Api(app)
 
 parser = reqparse.RequestParser()
-parser.add_argument('url')
-parser.add_argument('content')
 
 class Face(Resource):
     def get(self):
-        
         args = parser.parse_args()
+        parser.add_argument('url')
         url = args['url']
         re = ineko.recogn_face(url)
         return {
@@ -24,9 +22,13 @@ class Face(Resource):
         }
 
 class image(Resource):
+    
     def post(self):
+        args = parser.parse_args()
+        parser.add_argument('content')
+        content = args['content']
         return {
-            "1":request.values
+            "content":content
         }
 
 api.add_resource(Face, '/face')
