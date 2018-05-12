@@ -26,7 +26,6 @@ class Face(Resource):
         }
 
 class image(Resource):
-    
     def post(self):
         args = parser.parse_args()
         parser.add_argument('content')
@@ -52,6 +51,34 @@ class cats(Resource):
         return{
             'data':data
         }
+    def post(self):
+        args = parser.parse_args()
+        parser.add_argument('name')
+        parser.add_argument('img')
+        parser.add_argument('data')
+        name = args['name']
+        img = args['img']
+        data = args['data']
+        db = pymysql.connect("139.198.4.68","root","iNeko2018","ineko" )
+        cursor = db.cursor()
+        sql = "insert into cats (name,img,data) values ('"+ name + "','" + img + "','" + data  +"')"
+        try:
+            cursor.execute(sql)
+            db.commit()
+            db.close()
+            return {
+                'response':{
+                    'message':'success'
+                }
+            }
+        except:
+            db.rollback()
+            return {
+                'response':{
+                    'message':'faild'
+                }
+            }
+
     
 class cat(Resource):
     def get(self,cat_id):
