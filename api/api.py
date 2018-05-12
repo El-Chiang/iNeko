@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask,request
 from flask_restful import Resource, Api,reqparse
 import time
 
@@ -6,6 +6,7 @@ import sys
 sys.path.append('../')
 
 import ineko
+import pymysql
 
 site_url = '127.0.0.1'
 
@@ -40,8 +41,22 @@ class image(Resource):
             }
         }
 
+class cats(Resource):
+    def get(self):
+        db = pymysql.connect("139.198.4.68","root","iNeko2018","ineko" )
+        cursor = db.cursor()
+        sql = 'select * from cats'
+        cursor.execute(sql)
+        data = cursor.fetchall()
+        db.close()
+        return{
+            'data':data
+        }
+
+
 api.add_resource(Face, '/face')
 api.add_resource(image, '/images')
+api.add_resource(cats,'/cats')
 
 if __name__ == '__main__':
     app.run(debug=True)
