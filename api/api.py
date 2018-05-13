@@ -9,6 +9,31 @@ import ineko
 import pymysql
 
 site_url = '127.0.0.1'
+db_ip = '139.198.4.68'
+db_user = 'root'
+db_password = 'iNeko2018'
+db_name = 'ineko'
+
+def db_get(sql):
+    db = pymysql.connect(db_ip,db_user,db_password,db_name)
+    cursor = db.cursor()
+    cursor.execute(sql)
+    data = cursor.fetchall()
+    db.close()
+    return data
+
+def db_post(sql):
+    db = pymysql.connect(db_ip,db_user,db_password,db_name)
+    cursor = db.cursor()
+    try:
+        cursor.execute(sql)
+        db.commit()
+        db.close()
+        return True
+    except:
+        db.rollback()
+        db.close()
+        return False
 
 app = Flask(__name__)
 api = Api(app)
@@ -22,7 +47,9 @@ class Face(Resource):
         url = args['url']
         re = ineko.recogn_face(url)
         return {
-            'response':re
+            'response':{
+                'face':re
+            }
         }
 
 class image(Resource):
@@ -42,14 +69,12 @@ class image(Resource):
 
 class cats(Resource):
     def get(self):
-        db = pymysql.connect("139.198.4.68","root","iNeko2018","ineko" )
-        cursor = db.cursor()
         sql = 'select * from cats'
-        cursor.execute(sql)
-        data = cursor.fetchall()
-        db.close()
+        data = db_get(sql)
         return{
-            'data':data
+            'reponse':{
+                'cats_list':data
+            }
         }
     def post(self):
         args = parser.parse_args()
@@ -59,37 +84,38 @@ class cats(Resource):
         name = args['name']
         img = args['img']
         data = args['data']
-        db = pymysql.connect("139.198.4.68","root","iNeko2018","ineko" )
-        cursor = db.cursor()
         sql = "insert into cats (name,img,data) values ('"+ name + "','" + img + "','" + data  +"')"
-        try:
-            cursor.execute(sql)
-            db.commit()
-            db.close()
+        if(db_post(sql)):
             return {
                 'response':{
                     'message':'success'
                 }
             }
-        except:
-            db.rollback()
+        else:
             return {
                 'response':{
                     'message':'faild'
                 }
             }
-
     
 class cat(Resource):
     def get(self,cat_id):
-        db = pymysql.connect("139.198.4.68","root","iNeko2018","ineko" )
-        cursor = db.cursor()
         sql = 'select * from cats where id = ' + cat_id
-        cursor.execute(sql)
-        data = cursor.fetchall()
-        db.close()
+        data = db_get(sql)
         return{
-            'data':data
+            'response':{
+                'cat_info':data
+            }
+        }
+
+class cats_data(Resource):
+    def get(self,cat_id):
+        sql = 'select data from cats_data where cat = ' + cat_id
+        data = db_get(sql)
+        return{
+            'response':{
+                'cat_datas':data
+            }
         }
 
 
@@ -97,6 +123,8 @@ api.add_resource(Face, '/face')
 api.add_resource(image, '/images')
 api.add_resource(cats,'/cats')
 api.add_resource(cat,'/cats/<cat_id>')
+api.add_resource(cats_data,'/cats_data/<cat_id>')
+
 
 if __name__ == '__main__':
     app.run(debug=True)
