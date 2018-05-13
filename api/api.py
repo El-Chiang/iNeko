@@ -108,7 +108,7 @@ class cat(Resource):
             }
         }
 
-class cats_data(Resource):
+class cat_data(Resource):
     def get(self,cat_id):
         sql = 'select data from cats_data where cat = ' + cat_id
         data = db_get(sql)
@@ -118,12 +118,22 @@ class cats_data(Resource):
             }
         }
 
+class cats_data(Resource):
+    def get(self):
+        sql = 'select cat,data from cats_data'
+        data = db_get(sql)
+        return{
+            'response':{
+                'cats_datas':data
+            }
+        }
 
 api.add_resource(Face, '/face')
 api.add_resource(image, '/images')
 api.add_resource(cats,'/cats')
 api.add_resource(cat,'/cats/<cat_id>')
-api.add_resource(cats_data,'/cats_data/<cat_id>')
+api.add_resource(cat_data,'/cats_data/<cat_id>')
+api.add_resource(cats_data,'/cats_data')
 
 
 if __name__ == '__main__':
