@@ -140,11 +140,17 @@ class identify(Resource):
                         'cat':'tiecha'
                     }
             }
-        else:
+        elif(url=='Cat_pipi_1.jpg'):
             return {
                 'response':{
                         'id':1,
                         'cat':'pipi'
+                    }
+            }
+        else:
+            return {
+                'response':{
+                        'result':'null'
                     }
             }
 
