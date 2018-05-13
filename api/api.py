@@ -72,7 +72,7 @@ class cats(Resource):
         sql = 'select * from cats'
         data = db_get(sql)
         return{
-            'reponse':{
+            'response':{
                 'cats_list':data
             }
         }
@@ -128,13 +128,34 @@ class cats_data(Resource):
             }
         }
 
+class identify(Resource):
+    def get(self):
+        args = parser.parse_args()
+        parser.add_argument('url')
+        id = args['url']
+        if(id=='1'):
+            return {
+                'response':{
+                        'id':1,
+                        'cat':'pipi'
+                    }
+            }
+        else:
+            return {
+                'response':{
+                        'id':2,
+                        'cat':'mengmeng'
+                    }
+            }
+
+
 api.add_resource(Face, '/face')
 api.add_resource(image, '/images')
 api.add_resource(cats,'/cats')
 api.add_resource(cat,'/cats/<cat_id>')
 api.add_resource(cat_data,'/cats_data/<cat_id>')
 api.add_resource(cats_data,'/cats_data')
-
+api.add_resource(identify,'/identify')
 
 if __name__ == '__main__':
     app.run(debug=True)
