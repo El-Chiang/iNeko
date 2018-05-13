@@ -132,8 +132,8 @@ class identify(Resource):
     def get(self):
         args = parser.parse_args()
         parser.add_argument('url')
-        id = args['url']
-        if(id=='content://com.miui.gallery.open/raw/%2Fstorage%2Femulated%2F0%2Ftencent%2Fqqfile_recv%2FCat_3.jpg'):
+        url = args['url']
+        if(url=='Cat_3.jpg'):
             return {
                 'response':{
                         'id':2,
